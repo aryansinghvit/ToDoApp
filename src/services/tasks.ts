@@ -7,14 +7,19 @@ export async function getTasks() {
 
     if (data) {
         data.sort((a, b) => {
-            // 1. Sort by Priority: High > Medium > Low
+            // 1. Sort by Completion: Active first, Completed last
+            if (a.is_completed !== b.is_completed) {
+                return a.is_completed ? 1 : -1;
+            }
+
+            // 2. Sort by Priority: High > Medium > Low
             const priorityOrder: { [key: string]: number } = { 'High': 1, 'Medium': 2, 'Low': 3 };
             const pA = priorityOrder[a.priority] || 99;
             const pB = priorityOrder[b.priority] || 99;
 
             if (pA !== pB) return pA - pB;
 
-            // 2. Sort by Deadline: Ascending (Earlier times first)
+            // 3. Sort by Deadline: Ascending (Earlier times first)
             const dateA = a.deadline ? new Date(a.deadline).getTime() : Number.MAX_SAFE_INTEGER;
             const dateB = b.deadline ? new Date(b.deadline).getTime() : Number.MAX_SAFE_INTEGER;
 
